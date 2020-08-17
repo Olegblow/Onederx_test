@@ -1,4 +1,3 @@
-import aiohttp
 import pytest
 
 from app import init_app
@@ -25,7 +24,7 @@ async def test_get_handler(client):
         ({"description": "qwe", "time_alarm": "2021-17-17  15:45"}, 500),
     )
 )
-async def test_get_handler(client, parameters):
+async def test_post_handler(client, parameters):
     data, status = parameters
     response = await client.post('api/v1/alarm_clock', json=data)
     assert response.status == status

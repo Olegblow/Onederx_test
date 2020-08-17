@@ -1,7 +1,6 @@
 import asyncio
 import copy
 import datetime
-import time
 from json import JSONDecodeError
 
 from aiohttp.web import Response, View, WebSocketResponse, json_response
@@ -21,7 +20,10 @@ class AlarmClockHandler(View):
         return json_response(alarms)
 
     async def post(self) -> Response:
-        request_json = await self.request.json()
+        try:
+            request_json = await self.request.json()
+        except JSONDecodeError:
+            return json_response({'status': 'bad request'}, status=400)
         data = validate_data(request_json, alarm_clock_schema)
         db: Engine = self.request.app['db']
         async with db.acquire() as conn:
@@ -30,10 +32,12 @@ class AlarmClockHandler(View):
 
 
 async def websocket_handler(request):
-    """websocket хэнждлер, для сигнализирования сработанного будильника."""
+    """Websocket хэнждлер, для сигнализирования сработанного будильника."""
     ws = WebSocketResponse()
     await ws.prepare(request)
+    now = datetime.datetime.now()
     await ws.send_str('ws connect')
+    await ws.send_str(f'Now: {now}')
     db: Engine = request.app['db']
     async with db.acquire() as conn:
         alarm_clocks = await get_alarms(conn, ws=True)

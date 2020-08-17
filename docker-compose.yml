@@ -9,8 +9,17 @@ services:
             - postgres_data:/var/lib/postgresql/data/
         env_file:
             - .env
+
+    web:
+        build: .
         ports:
-            - '5434:5432'
+            - '8080:8080'
+        volumes:
+            - ./app:/app
+        env_file: .env
+        depends_on:
+            - db
+        command: python app.py
 
 
 volumes:
