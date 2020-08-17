@@ -1,0 +1,15 @@
+#gitignore
+
+/venvnv
+/venv/
+/venv_/
+.venv/
+/.idea/
+/.vscode/
+/.ropeproject/
+/env/
+
+*.pyc
+*.sql
+.env
+
